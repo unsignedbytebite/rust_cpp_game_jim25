@@ -10,5 +10,7 @@ impl Plugin for ClientPlugin {
 
         app.add_systems(Startup, startups::setup_camera);
         app.add_systems(Startup, startups::load);
+
+        app.add_systems(Update, updates::move_elf);
     }
 }

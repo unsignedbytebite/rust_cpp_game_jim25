@@ -1,8 +1,6 @@
+use super::*;
 use bevy::{
-    asset::RenderAssetUsages,
     camera::{RenderTarget, visibility::RenderLayers},
-    color::palettes::css::BLACK,
-    image::{ImageFilterMode, ImageSampler, ImageSamplerDescriptor},
     prelude::*,
     render::render_resource::{
         Extent3d, TextureDescriptor, TextureDimension, TextureFormat, TextureUsages,
@@ -66,8 +64,9 @@ pub fn load(mut commands: Commands, asset_server: Res<AssetServer>) {
         RenderLayers::layer(0),
         AseAnimation {
             animation: Animation::tag("loop"),
-            aseprite: asset_server.load("torch.aseprite"),
+            aseprite: asset_server.load("elf.aseprite"),
         },
         Sprite::default(),
+        components::LocalPlayer,
     ));
 }
