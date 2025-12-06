@@ -4,16 +4,25 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+async-compat = "0.2.5"
 bevy = { version = "0.17.3", default-features = false, features = [
   "bevy_state",
   "bevy_log",
   "reflect_auto_register",
 ]}
 bevy_aseprite_ultra = { version = "0.7.0",  optional = true }
-lightyear = "0.25.5"
+lightyear = { git = "https://github.com/cBournhonesque/lightyear.git", branch = "main", features = [
+  "interpolation",
+  "prediction",
+  "replication",
+  "webtransport",
+  "webtransport_self_signed",
+  "webtransport_dangerous_configuration",
+]}
+serde = { version = "1.0.228", features = ["derive"] }
 
 [features]
-default = ["client"]
+default = ["server", "lightyear/netcode", "lightyear/server"]
 server = []
 client = [
 "bevy/bevy_asset",
