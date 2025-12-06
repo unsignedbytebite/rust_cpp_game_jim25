@@ -22,8 +22,10 @@ lightyear = { git = "https://github.com/cBournhonesque/lightyear.git", branch = 
 serde = { version = "1.0.228", features = ["derive"] }
 
 [features]
-default = ["server", "lightyear/netcode", "lightyear/server"]
-server = []
+default = ["client", "lightyear/netcode"]
+server = [
+"lightyear/server"
+]
 client = [
 "bevy/bevy_asset",
 "bevy/bevy_render",
