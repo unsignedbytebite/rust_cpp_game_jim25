@@ -164,5 +164,7 @@ pub fn init() {
     });
     app.add_systems(Startup, start);
 
+    app.add_plugins(super::server::plugin::ServerPlugin);
+
     app.run();
 }

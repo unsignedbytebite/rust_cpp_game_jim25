@@ -1,8 +1,8 @@
 #[cfg(feature = "server")]
 mod server_runner;
 
-// #[cfg(feature = "server")]
-// mod server;
+#[cfg(feature = "server")]
+mod server;
 
 #[cfg(feature = "client")]
 mod client_runner;
