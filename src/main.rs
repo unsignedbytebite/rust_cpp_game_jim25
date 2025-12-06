@@ -10,6 +10,8 @@ mod client_runner;
 #[cfg(feature = "client")]
 mod client;
 
+mod protocol;
+
 fn main() {
     #[cfg(feature = "server")]
     server_runner::init();
