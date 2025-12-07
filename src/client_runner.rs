@@ -12,7 +12,9 @@ use lightyear::{
     },
 };
 use serde::{Deserialize, Serialize};
+use sha2::Digest;
 use std::{
+    io::Read,
     net::{IpAddr, Ipv4Addr, SocketAddr},
     str::FromStr,
     time::Duration,
@@ -143,10 +145,26 @@ pub fn init() {
 
     let port = 5888;
 
+    let now = std::time::SystemTime::now();
+    let since_epoch = now
+        .duration_since(std::time::UNIX_EPOCH)
+        .expect("Time went backwards");
+    let millies = since_epoch.as_millis();
+
+    let hasher = sha2::Sha256::digest(millies.to_be_bytes());
+
+    fn vec_to_u64_le(v: Vec<u8>) -> u64 {
+        let mut arr = [0u8; 8];
+        let len = v.len().min(8);
+        arr[..len].copy_from_slice(&v[..len]);
+        u64::from_le_bytes(arr)
+    }
+
     app.world_mut().spawn(ExampleClient {
-        client_id: 0,
+        client_id: vec_to_u64_le(hasher.to_vec()),
         client_port: port,
-        server_addr: SocketAddr::new(IpAddr::from_str("18.133.225.101").unwrap(), port),
+        // server_addr: SocketAddr::new(IpAddr::from_str("18.133.225.101").unwrap(), port),
+        server_addr: SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), port),
         transport: ClientTransports::WebTransport,
         shared: SharedSettings {
             protocol_id: 0,

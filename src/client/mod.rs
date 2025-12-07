@@ -1,4 +1,5 @@
 pub mod components;
+pub mod observers;
 pub mod plugin;
 pub mod startups;
 pub mod updates;

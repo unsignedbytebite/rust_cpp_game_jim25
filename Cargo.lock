@@ -5456,6 +5456,7 @@ dependencies = [
  "bevy_aseprite_ultra",
  "lightyear",
  "serde",
+ "sha2",
 ]
 
 [[package]]

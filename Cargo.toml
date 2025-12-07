@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-async-compat = "0.2.5"
+async-compat = { version = "0.2.5", optional = true }
 bevy = { version = "0.17.3", default-features = false, features = [
   "bevy_state",
   "bevy_log",
@@ -18,13 +18,20 @@ lightyear = { git = "https://github.com/cBournhonesque/lightyear.git", branch = 
   "webtransport",
   "webtransport_self_signed",
   "webtransport_dangerous_configuration",
+  "netcode"
 ]}
 serde = { version = "1.0.228", features = ["derive"] }
+sha2 = { version = "0.10", optional = true }
 
 [features]
-default = ["client", "lightyear/netcode"]
+default = ["client"]
 server = [
-"lightyear/server"
+"async-compat",
+"lightyear/server",
+"lightyear/interpolation",
+"lightyear/prediction",
+"lightyear/replication",
+"lightyear/input_native",
 ]
 client = [
 "bevy/bevy_asset",
@@ -44,5 +51,10 @@ client = [
 "bevy/bevy_ui",
 "bevy/bevy_ui_render",
 "bevy/bevy_window",
-"bevy_aseprite_ultra"
+"bevy_aseprite_ultra",
+"lightyear/interpolation",
+"lightyear/prediction",
+"lightyear/replication",
+"lightyear/input_native",
+"sha2"
 ]

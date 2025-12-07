@@ -58,15 +58,4 @@ pub fn setup_camera(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
 
 pub fn load(mut commands: Commands, asset_server: Res<AssetServer>) {
     info_once!("load");
-
-    commands.spawn((
-        Transform::from_xyz(20.0, 20.0, 0.0).with_scale(Vec3::splat(1.0)),
-        RenderLayers::layer(0),
-        AseAnimation {
-            animation: Animation::tag("loop"),
-            aseprite: asset_server.load("elf.aseprite"),
-        },
-        Sprite::default(),
-        components::LocalPlayer,
-    ));
 }
