@@ -55,7 +55,3 @@ pub fn setup_camera(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
     ));
     commands.spawn((Camera2d, Msaa::Off, RenderLayers::layer(1)));
 }
-
-pub fn load(mut commands: Commands, asset_server: Res<AssetServer>) {
-    info_once!("load");
-}

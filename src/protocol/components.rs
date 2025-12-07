@@ -56,7 +56,7 @@ impl MapEntities for Inputs {
 }
 
 pub fn shared_movement_behaviour(mut position: Mut<PlayerPosition>, input: &Inputs) {
-    const MOVE_SPEED: f32 = 10.0;
+    const MOVE_SPEED: f32 = 0.4;
     let Inputs::Direction(direction) = input;
     if direction.up {
         position.y += MOVE_SPEED;

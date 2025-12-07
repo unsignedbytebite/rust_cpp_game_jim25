@@ -11,9 +11,9 @@ impl Plugin for ClientPlugin {
         app.add_plugins(crate::protocol::plugin::ProtocolPlugin);
 
         app.add_systems(Startup, startups::setup_camera);
-        app.add_systems(Startup, startups::load);
 
         // app.add_systems(Update, updates::move_elf);
+        app.add_systems(Update, updates::sync_transform);
 
         app.add_systems(
             FixedPreUpdate,
@@ -21,9 +21,6 @@ impl Plugin for ClientPlugin {
             updates::buffer_input.in_set(InputSystems::WriteClientInputs),
         );
         app.add_systems(FixedUpdate, updates::player_movement);
-
-        app.add_systems(Update, updates::receive_message1);
         app.add_observer(observers::handle_predicted_spawn);
-        app.add_observer(observers::handle_interpolated_spawn);
     }
 }

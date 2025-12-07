@@ -11,6 +11,5 @@ impl Plugin for ServerPlugin {
         app.add_observer(updates::handle_connected);
 
         app.add_systems(FixedUpdate, updates::movement);
-        app.add_systems(Update, updates::send_message);
     }
 }

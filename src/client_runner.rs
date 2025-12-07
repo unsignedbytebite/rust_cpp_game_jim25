@@ -163,8 +163,8 @@ pub fn init() {
     app.world_mut().spawn(ExampleClient {
         client_id: vec_to_u64_le(hasher.to_vec()),
         client_port: port,
-        // server_addr: SocketAddr::new(IpAddr::from_str("18.133.225.101").unwrap(), port),
-        server_addr: SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), port),
+        server_addr: SocketAddr::new(IpAddr::from_str("18.133.225.101").unwrap(), port),
+        //server_addr: SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), port),
         transport: ClientTransports::WebTransport,
         shared: SharedSettings {
             protocol_id: 0,

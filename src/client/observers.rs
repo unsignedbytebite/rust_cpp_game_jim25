@@ -13,46 +13,24 @@ use lightyear::prelude::{input::native::InputMarker, *};
 /// The `With<Predicted>` filter ensures we only add the `InputMarker` once.
 pub(crate) fn handle_predicted_spawn(
     trigger: On<Add, PlayerId>,
-    mut predicted: Query<&Predicted>,
+    mut predicted: Query<(&PlayerPosition, &PlayerId), With<Predicted>>,
     mut commands: Commands,
     asset_server: Res<AssetServer>,
 ) {
     info!("predicted spawn");
     let entity = trigger.entity;
-    if let Ok(pre) = predicted.get_mut(entity) {
-        warn!("Add InputMarker to Predicted entity: {:?}", entity);
+    if let Ok((pos, id)) = predicted.get_mut(entity) {
+        info!("Add InputMarker to Predicted entity: {:?}", entity);
         commands.entity(entity).insert((
             InputMarker::<Inputs>::default(),
-            // Transform::from_xyz(20.0, 20.0, 0.0).with_scale(Vec3::splat(1.0)),
+            Transform::from_xyz(pos.x, pos.y, 0.0),
             RenderLayers::layer(0),
             AseAnimation {
                 animation: Animation::tag("loop"),
                 aseprite: asset_server.load("elf.aseprite"),
             },
             Sprite::default(),
-            components::LocalPlayer,
+            id.to_owned(),
         ));
     }
-}
-
-/// When the predicted copy of the client-owned entity is spawned, do stuff
-/// - assign it a different saturation
-/// - keep track of it in the Global resource
-pub(crate) fn handle_interpolated_spawn(
-    trigger: On<Add, Interpolated>,
-    // mut interpolated: Query<Interpolated>,
-    mut commands: Commands,
-    asset_server: Res<AssetServer>,
-) {
-    warn!("interpolated spawn");
-    commands.spawn((
-        Transform::from_xyz(20.0, 20.0, 0.0).with_scale(Vec3::splat(1.0)),
-        RenderLayers::layer(0),
-        AseAnimation {
-            animation: Animation::tag("loop"),
-            aseprite: asset_server.load("elf.aseprite"),
-        },
-        Sprite::default(),
-        components::LocalPlayer,
-    ));
 }

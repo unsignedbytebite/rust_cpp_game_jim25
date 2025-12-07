@@ -1,6 +1,5 @@
 use super::*;
 use crate::protocol::components::*;
-use crate::protocol::messages::*;
 use bevy::{ecs::error::info, prelude::*};
 use lightyear::prelude::input::native::ActionState;
 use lightyear::prelude::server::ClientOf;
@@ -35,6 +34,7 @@ pub fn handle_connected(
     mut commands: Commands,
 ) {
     let Ok(client_id) = query.get(trigger.entity) else {
+        warn!("RemoteId not found");
         return;
     };
     let client_id = client_id.0;
@@ -44,7 +44,7 @@ pub fn handle_connected(
             // we replicate the Player entity to all clients that are connected to this server
             Replicate::to_clients(NetworkTarget::All),
             PredictionTarget::to_clients(NetworkTarget::Single(client_id)),
-            InterpolationTarget::to_clients(NetworkTarget::AllExceptSingle(client_id)),
+            // InterpolationTarget::to_clients(NetworkTarget::AllExceptSingle(client_id)),
             ControlledBy {
                 owner: trigger.entity,
                 lifetime: Default::default(),
@@ -59,36 +59,8 @@ pub fn handle_connected(
 }
 
 /// Read client inputs and move players in server therefore giving a basis for other clients
-pub fn movement(
-    timeline: Single<&LocalTimeline, With<Server>>,
-    mut position_query: Query<
-        (&mut PlayerPosition, &ActionState<Inputs>),
-        // if we run in host-server mode, we don't want to apply this system to the local client's entities
-        // because they are already moved by the client plugin
-        Without<Predicted>,
-    >,
-) {
-    let tick = timeline.tick();
+pub fn movement(mut position_query: Query<(&mut PlayerPosition, &ActionState<Inputs>)>) {
     for (position, inputs) in position_query.iter_mut() {
-        trace!(?tick, ?position, ?inputs, "server");
         shared_movement_behaviour(position, inputs);
-    }
-}
-
-/// Send messages from server to clients (only in non-headless mode, because otherwise we run with minimal plugins
-/// and cannot do input handling)
-pub fn send_message(
-    mut sender: ServerMultiMessageSender,
-    server: Single<&Server>,
-    input: Option<Res<ButtonInput<KeyCode>>>,
-) {
-    if input.is_some_and(|input| input.just_pressed(KeyCode::KeyM)) {
-        let message = Message1(5);
-        info!("Sending message: {:?}", message);
-        sender
-            .send::<_, Channel1>(&message, server.into_inner(), &NetworkTarget::All)
-            .unwrap_or_else(|e| {
-                error!("Failed to send message: {:?}", e);
-            });
     }
 }

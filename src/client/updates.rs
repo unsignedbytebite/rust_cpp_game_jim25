@@ -1,33 +1,23 @@
 use super::*;
 use crate::protocol::components::*;
-use crate::protocol::messages::*;
 use bevy::prelude::*;
 use lightyear::prelude::client::input::*;
 use lightyear::prelude::input::native::*;
 use lightyear::prelude::{MessageReceiver, Predicted};
 
-pub fn move_elf(
-    time: Res<Time>,
-    keys: Res<ButtonInput<KeyCode>>,
-    mut local_player_trans: Single<&mut Transform, With<components::LocalPlayer>>,
+pub(crate) fn sync_transform(
+    sync_players: Query<(&PlayerPosition, &PlayerId)>,
+    mut local_players: Query<(&mut Transform, &PlayerId)>,
 ) {
-    let delta = time.delta_secs();
-    let player_vel = 16.0 * delta;
-
-    if keys.pressed(KeyCode::KeyW) {
-        local_player_trans.translation.y += player_vel;
-    } else if keys.pressed(KeyCode::KeyS) {
-        local_player_trans.translation.y -= player_vel;
-    } else if keys.pressed(KeyCode::KeyA) {
-        local_player_trans.translation.x -= player_vel;
-    } else if keys.pressed(KeyCode::KeyD) {
-        local_player_trans.translation.x += player_vel;
-    }
-}
-
-pub(crate) fn set_transform(players: Query<(&PlayerPosition, &mut Transform)>) {
-    for position in &players {
-        info!(">>>");
+    for (sync_pos, sync_id) in &sync_players {
+        for (mut trans, id) in &mut local_players {
+            if id == sync_id {
+                info!("sync {id:?}");
+                trans.translation.x = sync_pos.x;
+                trans.translation.y = sync_pos.y;
+                break;
+            }
+        }
     }
 }
 
@@ -69,22 +59,8 @@ pub fn buffer_input(
 /// The client input only gets applied to predicted entities that we own
 /// This works because we only predict the user's controlled entity.
 /// If we were predicting more entities, we would have to only apply movement to the player owned one.
-pub fn player_movement(
-    // timeline: Single<&LocalTimeline>,
-    mut position_query: Query<(&mut PlayerPosition, &ActionState<Inputs>), With<Predicted>>,
-) {
-    // let tick = timeline.tick();
+pub fn player_movement(mut position_query: Query<(&mut PlayerPosition, &ActionState<Inputs>)>) {
     for (position, input) in position_query.iter_mut() {
-        // trace!(?tick, ?position, ?input, "client");
-        // NOTE: be careful to directly pass Mut<PlayerPosition>
-        // getting a mutable reference triggers change detection, unless you use `as_deref_mut()`
         shared_movement_behaviour(position, input);
-    }
-}
-
-/// System to receive messages on the client
-pub fn receive_message1(mut receiver: Single<&mut MessageReceiver<Message1>>) {
-    for message in receiver.receive() {
-        info!("Received message: {:?}", message);
     }
 }
